@@ -1,3 +1,98 @@
+
+
+/* import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+void checkForUpdate(BuildContext context) async {
+  const String githubVersionUrl =
+      "https://raw.githubusercontent.com/Esmaelasid/myaccounts_pro/main/version.json";
+  const String updateUrl =
+      "https://mritasid.github.io/Html_And_Css_template_tow/#flanding";
+
+  // ✅ إغلاق القائمة الجانبية
+  Navigator.pop(context);
+
+  // ✅ التحقق من الاتصال بالإنترنت
+  bool isConnected = await _isConnectedToInternet();
+  if (!isConnected) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("⚠️ تحقق من الوصول للإنترنت"),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return;
+  }
+
+  try {
+    // ✅ جلب رقم الإصدار الجديد من GitHub
+    final response = await http.get(Uri.parse(githubVersionUrl));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> latestData = jsonDecode(response.body);
+      String latestVersion = latestData["latest_version"];
+
+      // ✅ جلب رقم الإصدار المحلي من التطبيق
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      String currentVersion = packageInfo.version;
+
+      if (currentVersion != latestVersion) {
+        // ✅ يوجد تحديث جديد → فتح المتصفح للتحديث
+        if (await canLaunchUrl(Uri.parse(updateUrl))) {
+          await launchUrl(Uri.parse(updateUrl));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("❌ فشل في فتح الرابط"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        // ✅ التطبيق محدث → إظهار رسالة
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("✅ التطبيق محدث إلى آخر إصدار"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("❌ فشل في التحقق من التحديث"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("❌ خطأ أثناء جلب التحديث: $e"),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
+// ✅ دالة التحقق من توفر الإنترنت بدون `connectivity_plus`
+Future<bool> _isConnectedToInternet() async {
+  try {
+    final result = await InternetAddress.lookup('google.com');
+    return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+  } catch (_) {
+    return false;
+  }
+}
+
+
+ */
+
+
+
 /* class DatabaseHelper {
   // ... (الدوال الأخرى موجودة مسبقًا)
 

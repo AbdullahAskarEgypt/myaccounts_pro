@@ -4,15 +4,16 @@ import 'package:path_provider/path_provider.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
 import 'package:intl/intl.dart'; // مكتبة للتعامل مع التاريخ
+import 'package:googleapis/drive/v3.dart' as drive;
+// import 'package:googleapis/drive/v3.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 // ================================
-// import 'dart:io';
 // import 'package:path/path.dart';
 // import 'package:path_provider/path_provider.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
-// import 'package:googleapis/drive/v3.dart' as drive;
 // import 'package:googleapis_auth/auth_io.dart';
-// import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 
 // import 'package:intl/intl.dart';
 class DatabaseHelper {
@@ -821,9 +822,152 @@ class DatabaseHelper {
     final files = backupDir.listSync().whereType<File>().toList();
     return files;
   }
+
+// ======================================
+  /// **التحقق من الاتصال بالإنترنت**
+  Future<bool> _isConnectedToInternet() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// **إنشاء أو استرجاع معرف مجلد `MritPro` في Google Drive**
+  Future<String?> _getOrCreateBackupFolder(drive.DriveApi driveApi) async {
+    // البحث عن مجلد MritPro في Google Drive
+    const folderQuery =
+        "name = 'MritPro' and mimeType = 'application/vnd.google-apps.folder'";
+    final folderList = await driveApi.files.list(q: folderQuery);
+
+    if (folderList.files != null && folderList.files!.isNotEmpty) {
+      return folderList.files!.first.id; // إرجاع معرف المجلد إذا كان موجودًا
+    }
+
+    // إنشاء مجلد جديد
+    final drive.File folderMetadata = drive.File()
+      ..name = "MritPro"
+      ..mimeType = "application/vnd.google-apps.folder";
+
+    final createdFolder = await driveApi.files.create(folderMetadata);
+    return createdFolder.id;
+  }
+
+  /// **رفع النسخة الاحتياطية إلى Google Drive داخل مجلد `MritPro`**
+  Future<String> backupToGoogleDrive() async {
+    if (!await _isConnectedToInternet()) {
+      return '❌ يرجى التحقق من الاتصال بالإنترنت';
+    }
+
+    try {
+      final GoogleSignIn googleSignIn =
+          GoogleSignIn(scopes: [drive.DriveApi.driveFileScope]);
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        return '⚠️ يجب تسجيل الدخول إلى Google أولًا';
+      }
+
+      final authHeaders = await googleUser.authHeaders;
+      final client = GoogleAuthClient(authHeaders);
+      final driveApi = drive.DriveApi(client);
+
+      // إنشاء أو الحصول على مجلد MritPro
+      final folderId = await _getOrCreateBackupFolder(driveApi);
+      if (folderId == null) {
+        return '❌ فشل في إنشاء مجلد MritPro في Google Drive';
+      }
+
+      // إنشاء النسخة الاحتياطية محليًا
+      final backupFile = await exportDatabase();
+      final file = drive.File()
+        ..name = 'backup_${DateTime.now().millisecondsSinceEpoch}.db'
+        ..parents = [folderId]; // وضع الملف داخل مجلد MritPro
+
+      final media = drive.Media(backupFile.openRead(), backupFile.lengthSync());
+      await driveApi.files.create(file, uploadMedia: media);
+
+      return '✅ تم رفع النسخة الاحتياطية إلى Google Drive بنجاح';
+    } catch (e) {
+      return '❌ فشل في رفع النسخة الاحتياطية: $e';
+    }
+  }
+
+  /// **استعادة أحدث نسخة احتياطية من Google Drive**
+  Future<String> restoreBackupFromGoogleDrive() async {
+    if (!await _isConnectedToInternet()) {
+      return '❌ يرجى التحقق من الاتصال بالإنترنت';
+    }
+
+    try {
+      final GoogleSignIn googleSignIn =
+          GoogleSignIn(scopes: [drive.DriveApi.driveFileScope]);
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        return '⚠️ يجب تسجيل الدخول إلى Google أولًا';
+      }
+
+      final authHeaders = await googleUser.authHeaders;
+      final client = GoogleAuthClient(authHeaders);
+      final driveApi = drive.DriveApi(client);
+
+      // البحث عن مجلد MritPro
+      final folderId = await _getOrCreateBackupFolder(driveApi);
+      if (folderId == null) {
+        return '❌ لم يتم العثور على مجلد MritPro في Google Drive';
+      }
+
+      // البحث عن أحدث ملف نسخة احتياطية
+      final fileList = await driveApi.files.list(
+        q: "'$folderId' in parents",
+        orderBy: "createdTime desc",
+        pageSize: 1,
+      );
+
+      if (fileList.files == null || fileList.files!.isEmpty) {
+        return '❌ لا توجد نسخ احتياطية متاحة في Google Drive';
+      }
+
+      final latestBackup = fileList.files!.first;
+      final fileId = latestBackup.id;
+
+      if (fileId == null) {
+        return '❌ فشل في العثور على الملف';
+      }
+
+      // تحميل الملف
+      final mediaStream = await driveApi.files.get(fileId,
+          downloadOptions: drive.DownloadOptions.fullMedia) as drive.Media;
+      final filePath =
+          "/storage/emulated/0/Documents/MritPro/restored_database.db";
+      final file = File(filePath);
+      final sink = file.openWrite();
+      await sink.addStream(mediaStream.stream);
+      await sink.close();
+
+      return '✅ تم استعادة  النسخة الاحتياطية الاحدث بنجاح إلى: $filePath';
+    } catch (e) {
+      return '❌ فشل في استعادة النسخة الاحتياطية: $e';
+    }
+  }
+
+// ======================================
 }
 
+/// **كلاس لتسهيل التعامل مع Google API**
+class GoogleAuthClient extends http.BaseClient {
+  final Map<String, String> _headers;
+  final http.Client _client = http.Client();
 
+  GoogleAuthClient(this._headers);
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    return _client.send(request..headers.addAll(_headers));
+  }
+}
 /*
 //                              الاخير
  import 'package:sqflite/sqflite.dart';
