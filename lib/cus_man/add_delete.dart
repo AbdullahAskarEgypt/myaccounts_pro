@@ -783,6 +783,7 @@ class _AddDeletePageState extends State<AddDeletePage> {
               icon: const Icon(
                 Icons.home,
                 size: 35,
+                // color: Colors.white,
                 color: Colors.white,
               ),
               onPressed: () {

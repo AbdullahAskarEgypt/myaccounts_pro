@@ -141,6 +141,7 @@ class HomePage extends StatelessWidget {
               ),
               onTap: onThemeToggle,
             ),
+            Container(width: double.infinity, height: 3, color: Colors.cyan),
             ListTile(
               leading: const Icon(Icons.system_update),
               title: const Text(
@@ -154,6 +155,7 @@ class HomePage extends StatelessWidget {
               // onTap: () =>
               //     CodeUpdater.checkForUpdate(context), // ✅ زر التحديث اليدوي
             ),
+            Container(width: double.infinity, height: 3, color: Colors.cyan),
           ],
         ),
       ),
