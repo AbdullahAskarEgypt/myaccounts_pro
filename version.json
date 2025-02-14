@@ -1,13 +1,13 @@
 {
-    "version": "1.0.5",
+    "version": "1.0.1",
     "files": [
         {
             "path": "lib/main.dart",
-            "url": "https://raw.githubusercontent.com/Esmaelasid/mritapp/main/lib/main.dart"
+            "url": "https://raw.githubusercontent.com/Esmaelasid/myaccounts_pro/main/lib/main.dart"
         },
         {
             "path": "lib/utils/helper.dart",
-            "url": "https://raw.githubusercontent.com/Esmaelasid/mritapp/main/lib/utils/helper.dart"
+            "url": "https://raw.githubusercontent.com/Esmaelasid/myaccounts_pro/main/lib/cus_man/add_delete.dart"
         }
     ]
 }

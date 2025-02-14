@@ -147,8 +147,12 @@ class HomePage extends StatelessWidget {
                 "التحقق من التحديث",
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              onTap: () =>
-                  CodeUpdater.checkForUpdate(context), // ✅ زر التحديث اليدوي
+              onTap: () {
+                Navigator.pop(context);
+                CodeUpdater.checkForUpdate(context); // ✅ زر التحديث اليدوي
+              },
+              // onTap: () =>
+              //     CodeUpdater.checkForUpdate(context), // ✅ زر التحديث اليدوي
             ),
           ],
         ),
