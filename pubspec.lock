@@ -166,14 +166,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_code_push:
-    dependency: "direct main"
-    description:
-      name: flutter_code_push
-      sha256: "0d6ae43f897229f92b7cc74aebe6e2240b477c45db1bdf314bdf85495ae1277a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   flutter_lints:
     dependency: "direct dev"
     description:

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -230,19 +230,15 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+ */
 
-
-
-
-
-/* import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
-
 
 import 'cus_man/add_delete.dart';
 import 'cus_man/add_transaction.dart';
@@ -295,17 +291,12 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-
-
-
 class HomePage extends StatelessWidget {
   final VoidCallback onThemeToggle;
   final bool isDarkMode;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   HomePage({super.key, required this.onThemeToggle, required this.isDarkMode});
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -470,8 +461,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-
-
 void checkForUpdate(BuildContext context) async {
   const String githubVersionUrl =
       "https://raw.githubusercontent.com/Esmaelasid/myaccounts_pro/main/version.json";
@@ -552,7 +541,7 @@ Future<bool> _isConnectedToInternet() async {
     return false;
   }
 }
- */
+ 
 
 
 

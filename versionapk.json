@@ -1,4 +1,13 @@
 {
-  "latest_version": "1.1.0",
-  "changelog": "✅ تحسينات في الأداء\n🐛 إصلاح بعض الأخطاء"
+  "version": "1.1.8",
+  "files": [
+    {
+      "path": "lib/main.dart",
+      "url": "https://raw.githubusercontent.com/Esmaelasid/myaccounts_pro/main/lib/main.dart"
+    },
+    {
+      "path": "lib/utils/helper.dart",
+      "url": "https://raw.githubusercontent.com/Esmaelasid/myaccounts_pro/main/lib/cus_man/add_delete.dart"
+    }
+  ]
 }
