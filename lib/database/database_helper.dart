@@ -37,8 +37,9 @@ class DatabaseHelper {
     // await deleteDatabase(path);
     return await openDatabase(
       path,
-      version: 5, // زيادة رقم الإصدار لأننا أضفنا جداول جديدة
+      version: 6, // زيادة رقم الإصدار لأننا أضفنا جداول جديدة
       onCreate: _onCreate,
+      // onUpgrade: _onUpgrade,
     );
   }
 
@@ -98,7 +99,54 @@ class DatabaseHelper {
       FOREIGN KEY (agent_id) REFERENCES agents (id)
     )
   ''');
+
+    await db.execute('''
+      CREATE TABLE personal_info(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        serviceType TEXT,
+        address TEXT,
+        phoneNumber TEXT
+      )
+    ''');
   }
+
+  // Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+  //   if (oldVersion < 2) {
+  //     // إضافة جدول البيانات الشخصية
+  //     await db.execute('''
+  //     CREATE TABLE personal_info (
+  //       id INTEGER PRIMARY KEY AUTOINCREMENT,
+  //       name TEXT,
+  //       serviceType TEXT,
+  //       address TEXT,
+  //       phoneNumber TEXT
+  //     )
+  //   ''');
+  //   }
+  // }
+/*   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 5) {
+      // إنشاء جدول البيانات الشخصية
+      await db.execute('''
+      CREATE TABLE personal_info (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        serviceType TEXT,
+        address TEXT,
+        phoneNumber TEXT
+      )
+    ''');
+
+      // إضافة قيم افتراضية
+      await db.insert('personal_info', {
+        'name': 'اسم افتراضي',
+        'serviceType': 'نوع الخدمة الافتراضي',
+        'address': 'عنوان افتراضي',
+        'phoneNumber': 'رقم الهاتف الافتراضي',
+      });
+    }
+  } */
 
   // دالة للتحقق من وجود جدول
   Future<bool> doesTableExist(String tableName) async {
@@ -109,6 +157,26 @@ class DatabaseHelper {
     return result.isNotEmpty;
   }
 
+  // إضافة أو تحديث البيانات الشخصية
+  Future<void> insertOrUpdatePersonalInfo(Map<String, dynamic> info) async {
+    final db = await database;
+    final count = Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM personal_info'),
+    );
+
+    if (count == 0) {
+      await db.insert('personal_info', info);
+    } else {
+      await db.update('personal_info', info, where: 'id = 1');
+    }
+  }
+
+  // جلب البيانات الشخصية
+  Future<Map<String, dynamic>?> getPersonalInfo() async {
+    final db = await database;
+    final result = await db.query('personal_info', limit: 1);
+    return result.isNotEmpty ? result.first : null;
+  }
 // ================================================================
 //               ادارة العملاء والتجار
 // ================================================================
