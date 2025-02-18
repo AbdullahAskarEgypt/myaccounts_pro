@@ -456,6 +456,7 @@ class _AddDeletePageState extends State<AddDeletePage> {
     if (!mounted) return;
 
     Navigator.pop(context);
+    _toggleTable(true);
   }
 
   void _saveAgent() async {
@@ -474,6 +475,7 @@ class _AddDeletePageState extends State<AddDeletePage> {
     if (!mounted) return;
 
     Navigator.pop(context);
+    _toggleTable(false);
   }
 
   void _showTotalSummaryDialog() async {
@@ -838,104 +840,113 @@ class _AddDeletePageState extends State<AddDeletePage> {
           padding: const EdgeInsets.all(0.0),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // حقل البحث (يظهر على يمين الشاشة بجانب الأيقونات)
-                  if (_showSearchField)
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 4.0),
-                        child: TextField(
-                          autofocus: true,
-                          decoration: InputDecoration(
-                            hintText: 'ابحث بالاسم...',
+              Container(
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                        bottom: BorderSide(
+                      width: 2,
+                      color: Color.fromARGB(255, 138, 137, 137),
+                    ))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // حقل البحث (يظهر على يمين الشاشة بجانب الأيقونات)
+                    if (_showSearchField)
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 4.0),
+                          child: TextField(
+                            autofocus: true,
+                            decoration: InputDecoration(
+                              hintText: 'ابحث بالاسم...',
 
-                            hintStyle: TextStyle(color: Colors.grey[600]),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: BorderSide.none,
+                              hintStyle: TextStyle(color: Colors.grey[600]),
+                              filled: true,
+                              fillColor: const Color(0xFFE7E7E7),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              prefixIcon: IconButton(
+                                icon: const Icon(Icons.close,
+                                    color: Colors.red), // أيقونة إغلاق
+                                onPressed: () {
+                                  setState(() {
+                                    _showSearchField = false; // إخفاء حقل البحث
+                                    _searchQuery = ''; // إعادة تعيين نص البحث
+                                  });
+                                },
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 8.0), // جعل الحقل أصغر
                             ),
-                            prefixIcon: IconButton(
-                              icon: const Icon(Icons.close,
-                                  color: Colors.red), // أيقونة إغلاق
-                              onPressed: () {
-                                setState(() {
-                                  _showSearchField = false; // إخفاء حقل البحث
-                                  _searchQuery = ''; // إعادة تعيين نص البحث
-                                });
-                              },
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8.0), // جعل الحقل أصغر
+                            onChanged: (value) {
+                              setState(() {
+                                _searchQuery =
+                                    value; // تحديث نص البحث عند تغيير النص
+                              });
+                            },
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              _searchQuery =
-                                  value; // تحديث نص البحث عند تغيير النص
-                            });
-                          },
                         ),
                       ),
-                    ),
 
-                  // أيقونتي العملاء والوكلاء
-                  Container(
-                    padding: const EdgeInsets.all(1.0),
-                    width: 150.0,
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            children: [
-                              IconButton(
-                                icon: Icon(
-                                  Icons.people,
-                                  color: _showCustomersTable
-                                      ? Colors.blue
-                                      : Colors.grey,
-                                  size: 30,
-                                ),
-                                onPressed: () => _toggleTable(true),
-                              ),
-                              Text(
-                                'العملاء',
-                                style: TextStyle(
+                    // أيقونتي العملاء والوكلاء
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
+                      width: 150.0,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.people,
                                     color: _showCustomersTable
                                         ? Colors.blue
                                         : Colors.grey,
-                                    fontWeight: FontWeight.w900),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              IconButton(
-                                icon: Icon(
-                                  Icons.business,
-                                  color: !_showCustomersTable
-                                      ? Colors.orange
-                                      : Colors.grey,
-                                  size: 30,
+                                    size: 30,
+                                  ),
+                                  onPressed: () => _toggleTable(true),
                                 ),
-                                onPressed: () => _toggleTable(false),
-                              ),
-                              Text(
-                                'الوكلاء',
-                                style: TextStyle(
+                                Text(
+                                  'العملاء',
+                                  style: TextStyle(
+                                      color: _showCustomersTable
+                                          ? Colors.blue
+                                          : Colors.grey,
+                                      fontWeight: FontWeight.w900),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.business,
                                     color: !_showCustomersTable
                                         ? Colors.orange
                                         : Colors.grey,
-                                    fontWeight: FontWeight.w900),
-                              ),
-                            ],
-                          ),
-                        ]),
-                  ),
-                ],
+                                    size: 30,
+                                  ),
+                                  onPressed: () => _toggleTable(false),
+                                ),
+                                Text(
+                                  'الموردين',
+                                  style: TextStyle(
+                                      color: !_showCustomersTable
+                                          ? Colors.orange
+                                          : Colors.grey,
+                                      fontWeight: FontWeight.w900),
+                                ),
+                              ],
+                            ),
+                          ]),
+                    ),
+                  ],
+                ),
               ),
               Expanded(
                 child: Container(
@@ -1359,82 +1370,79 @@ class _AddDeletePageState extends State<AddDeletePage> {
                         ]),
                   ),
                   const SizedBox(height: 8.0),
-                  Container(
-                    width: double.infinity,
-                    height: 3,
-                    color: Colors.blue,
-                  ),
-                  const SizedBox(height: 10.0),
 
-                  // تحسين تنسيق أزرار التعديل والحذف بشكل عصري
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      // زر الحذف
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          _deleteCustomer(id);
-                        },
-                        child: Container(
-                          width: 60.0,
-                          height: 60.0,
-                          decoration: BoxDecoration(
-                            color: Colors.white, // لون الخلفية
-                            shape: BoxShape.circle, // شكل دائري
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.red.withOpacity(0.3),
-                                blurRadius: 8.0,
-                                spreadRadius: 2.0,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.delete,
-                            color: Colors.redAccent,
-                            size: 30.0,
-                          ),
-                        ),
-                      ),
-                      // زر التعديل
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          _updateCustomer(id, name, phone);
-                        },
-                        child: Container(
-                          width: 60.0,
-                          height: 60.0,
-                          decoration: BoxDecoration(
-                            color: Colors.white, // لون الخلفية
-                            shape: BoxShape.circle, // شكل دائري
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.orange.withOpacity(0.3),
-                                blurRadius: 8.0,
-                                spreadRadius: 2.0,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.edit,
-                            color: Colors.orangeAccent[400],
-                            size: 30.0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6.0),
-                  // زر الإغلاق
                   Container(
-                    width: double.infinity,
-                    height: 3,
-                    color: Colors.blue,
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    decoration: const BoxDecoration(
+                        color: Color(0xFFE1E1E1),
+                        border: Border(
+                          top: BorderSide(width: 3, color: Colors.blue),
+                          bottom: BorderSide(width: 3, color: Colors.blue),
+                        )),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // زر الحذف
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            _deleteCustomer(id);
+                          },
+                          child: Container(
+                            width: 40.0,
+                            height: 40.0,
+                            decoration: BoxDecoration(
+                              color: Colors.white, // لون الخلفية
+                              shape: BoxShape.circle, // شكل دائري
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.red.withOpacity(0.3),
+                                  blurRadius: 8.0,
+                                  spreadRadius: 2.0,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.redAccent,
+                              size: 30.0,
+                            ),
+                          ),
+                        ),
+                        // زر التعديل
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            _updateCustomer(id, name, phone);
+                          },
+                          child: Container(
+                            width: 40.0,
+                            height: 40.0,
+                            decoration: BoxDecoration(
+                              color: Colors.white, // لون الخلفية
+                              shape: BoxShape.circle, // شكل دائري
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.orange.withOpacity(0.3),
+                                  blurRadius: 8.0,
+                                  spreadRadius: 2.0,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.edit,
+                              color: Colors.orangeAccent[400],
+                              size: 30.0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+
+                  // زر الإغلاق
 
                   TextButton(
                     onPressed: () {
@@ -1752,82 +1760,79 @@ class _AddDeletePageState extends State<AddDeletePage> {
                   ),
                 ),
                 const SizedBox(height: 10.0),
-                Container(
-                  width: double.infinity,
-                  height: 3,
-                  color: Colors.orangeAccent,
-                ),
-                const SizedBox(height: 10.0),
 
-                // تحسين تنسيق أزرار التعديل والحذف بشكل عصري
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // زر الحذف
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        _deleteAgent(id);
-                      },
-                      child: Container(
-                        width: 60.0,
-                        height: 60.0,
-                        decoration: BoxDecoration(
-                          color: Colors.white, // لون الخلفية
-                          shape: BoxShape.circle, // شكل دائري
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.red.withOpacity(0.3),
-                              blurRadius: 8.0,
-                              spreadRadius: 2.0,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.delete,
-                          color: Colors.redAccent,
-                          size: 30.0,
-                        ),
-                      ),
-                    ),
-                    // زر التعديل
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        _updateAgent(id, name, phone);
-                      },
-                      child: Container(
-                        width: 60.0,
-                        height: 60.0,
-                        decoration: BoxDecoration(
-                          color: Colors.white, // لون الخلفية
-                          shape: BoxShape.circle, // شكل دائري
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.orange.withOpacity(0.3),
-                              blurRadius: 8.0,
-                              spreadRadius: 2.0,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.edit,
-                          color: Colors.orangeAccent[400],
-                          size: 30.0,
+                Container(
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  decoration: const BoxDecoration(
+                      color: Color(0xFFE1E1E1),
+                      border: Border(
+                        top: BorderSide(width: 3, color: Colors.orange),
+                        bottom: BorderSide(width: 3, color: Colors.orange),
+                      )),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // زر الحذف
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _deleteAgent(id);
+                        },
+                        child: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: BoxDecoration(
+                            color: Colors.white, // لون الخلفية
+                            shape: BoxShape.circle, // شكل دائري
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.red.withOpacity(0.3),
+                                blurRadius: 8.0,
+                                spreadRadius: 2.0,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.delete,
+                            color: Colors.redAccent,
+                            size: 30.0,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      // زر التعديل
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _updateAgent(id, name, phone);
+                        },
+                        child: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: BoxDecoration(
+                            color: Colors.white, // لون الخلفية
+                            shape: BoxShape.circle, // شكل دائري
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.orange.withOpacity(0.3),
+                                blurRadius: 8.0,
+                                spreadRadius: 2.0,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.edit,
+                            color: Colors.orangeAccent[400],
+                            size: 30.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 6.0),
                 // زر الإغلاق
-                Container(
-                  width: double.infinity,
-                  height: 3,
-                  color: Colors.orangeAccent,
-                ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();

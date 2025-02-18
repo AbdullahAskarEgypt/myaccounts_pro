@@ -563,7 +563,7 @@ class HomePage extends StatelessWidget {
            */
             Container(
               height: 160,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 // border: Border(left: BorderSide(width: 3, color: Colors.cyan)),
                 image: DecorationImage(
                   image: AssetImage(
@@ -573,7 +573,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               child: Container(
-                color: Color(0xC1000000),
+                color: const Color(0xC1000000),
                 child: FutureBuilder<Map<String, dynamic>?>(
                   future: DatabaseHelper().getPersonalInfo(), // جلب البيانات
                   builder: (context, snapshot) {
@@ -595,7 +595,7 @@ class HomePage extends StatelessWidget {
                                 height: 50), // مسافة بين الصورة والنص
 
                             // الصورة في المنتصف من الجهة اليمين
-                            Align(
+                            const Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
                                   'مرحبًا',
@@ -732,8 +732,10 @@ class HomePage extends StatelessWidget {
                 MaterialPageRoute(
                     builder: (context) => const DailyAccountPage()));
           } else if (label == 'النسخ  والاستعاده') {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => BackupRestorePage()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const BackupRestorePage()));
           }
         },
         child: Column(

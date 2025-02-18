@@ -208,27 +208,105 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
       drawer: Drawer(
           child: Column(
         children: [
-          const SizedBox(height: 50),
+          Container(
+            margin: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.red),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                const Text('حساباتي'),
+              ],
+            ),
+          ),
+          Container(width: double.infinity, height: 3, color: Colors.cyan),
+          // const SizedBox(height: 50),
+
           if (_currentUserData != null) ...[
-            CircleAvatar(
-              backgroundImage: _currentUserData!["photoUrl"] != null
-                  ? NetworkImage(_currentUserData!["photoUrl"]!)
-                  : null,
-              child: _currentUserData!["photoUrl"] == null
-                  ? const Icon(Icons.account_circle, size: 40)
-                  : null,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              _currentUserData!["displayName"] ?? 'مستخدم غير معروف',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
+            Container(
+              width: double.infinity,
+              // height: 160,
+              decoration: BoxDecoration(
+                // border: Border(left: BorderSide(width: 3, color: Colors.cyan)),
+                image: DecorationImage(
+                  image: AssetImage(
+                    'images/google.jpg',
+                  ), // استبدل باسم الصورة
+                  fit: BoxFit.cover, // تغطية الخلفية بالصورة
+                ),
               ),
+              child: Container(
+                  color: Color.fromARGB(168, 0, 0, 0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 30),
+                      Text(
+                        'تم تسجيل الدخول الى قوقل بواسطة ',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // CircleAvatar(
+                      //   backgroundImage: _currentUserData!["photoUrl"] != null
+                      //       ? NetworkImage(_currentUserData!["photoUrl"]!)
+                      //       : null,
+                      //   child: _currentUserData!["photoUrl"] == null
+                      //       ? const Icon(Icons.account_circle, size: 80)
+                      //       : null,
+                      // ),
+                      CircleAvatar(
+                        radius: 30, // يمكنك تعديل حجم الدائرة
+                        backgroundImage:
+                            _currentUserData!["photoUrl"] != null &&
+                                    _currentUserData!["photoUrl"]!
+                                        .startsWith("http")
+                                ? NetworkImage(_currentUserData![
+                                    "photoUrl"]!) // تحميل الصورة إذا كانت صالحة
+                                : null, // لا تحميل صورة إذا كانت غير صالحة
+                        child: _currentUserData!["photoUrl"] == null ||
+                                !_currentUserData!["photoUrl"]!
+                                    .startsWith("http")
+                            ? const Icon(
+                                Icons.account_circle,
+                                size: 60,
+                                //  color: Colors.grey
+                              )
+                            // عرض الأيقونة فقط إذا كانت الصورة غير صالحة
+                            : null, // لا تعرض أي شيء إذا كانت الصورة صالحة
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        _currentUserData!["displayName"] ?? 'مستخدم غير معروف',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        _currentUserData!["email"] ?? 'بريد غير متاح',
+                        style: TextStyle(
+                          color: Colors.yellow,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  )),
             ),
-            const SizedBox(height: 20),
-            Text(_currentUserData!["email"] ?? 'بريد غير متاح'),
-            const SizedBox(height: 40),
             Container(
               width: double.infinity,
               height: 3,
@@ -423,7 +501,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
 
 
 
-/* // ignore_for_file: use_build_context_synchronously
+/*
+ // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart'; // أضف هذا الاستيراد
